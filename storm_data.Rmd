@@ -43,20 +43,20 @@ Based on the above histogram, we see that the number of events tracked starts to
 storm <- stormData[stormData$year >= 1995, ]
 dim(storm)
 ```
-Now, there are 751740 rows and 38 columns in total.
+Now, there are 681500 rows and 38 columns in total.
 
 #### Impact on Public Health
 In this section, we check the number of **fatalities** and **injuries** that are caused by the severe weather events. We would like to get the first 15 most severe types of weather events.
 
 ```{r,echo = TRUE}
 
-sum.FATALITIES.Event <- aggregate(FATALITIES~EVTYPE,stormData,sum)
-sum.fat.Event.sort <- sum.FATALITIES.Event[order(-sum.FATALITIES.Event$FATALITIES),]
+sum.fat.Event <- aggregate(FATALITIES~EVTYPE,stormData,sum)
+sum.fat.Event.sort <- sum.fat.Event[order(-sum.fat.Event$FATALITIES),]
 fatalities <- sum.fat.Event.sort[1:20,]
 
 sum.inj.Event <- aggregate(INJURIES~EVTYPE,stormData,sum)
-sort.inj <- sum.inj.Event[order(-sum.inj.Event$INJURIES),]
-injuries <- sort.inj[1:20,]
+sum.inj.event.sort <- sum.inj.Event[order(-sum.inj.Event$INJURIES),]
+injuries <- sum.inj.event.sort[1:20,]
 
 
 ```
@@ -90,11 +90,11 @@ options(scipen=999) #Disable scientific notation in R
 
 property.damage.sum <- aggregate(propertyDamage~EVTYPE,storm.Convertion,sum)
 property.damage.order <-property.damage.sum[order(-property.damage.sum$propertyDamage),]
-property.damage <- property.damage.order [1:20,]
+property <- property.damage.order [1:20,]
 
-corp.damage.sum <- aggregate(cropDamage~EVTYPE,storm.Convertion,sum)
-corp.damage.order <-corp.damage.sum[order(-property.damage.sum$propertyDamage),]
-corp.damage <- corp.damage.order [1:20,]
+crop.damage.sum <- aggregate(cropDamage~EVTYPE,storm.Convertion,sum)
+crop.damage.order <-corp.damage.sum[order(-corp.damage.sum$cropDamage),]
+crop <- crop.damage.order [1:20,]
 
 
 
@@ -131,20 +131,25 @@ Based on the above histograms, we find that **excessive heat** and **tornado** c
 As for the impact on economy, we have got two sorted lists below by the amount of money cost by damages.  
 
 ```{r,echo = TRUE}
-property.damage
-corp.damage
+property
+corp
 ```
 And the following is a pair of graphs of total property damage and total crop damage affected by these severe weather events. 
 ```{r,echo = TRUE}
-propertyPlot <- qplot(EVTYPE, data = property.damage, weight = propertyDamage, geom = "bar", binwidth = 1) + 
+propertyPlot <- qplot(EVTYPE, data = property, weight = propertyDamage, geom = "bar", binwidth = 1) + 
    geom_bar(fill="red" )+
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_y_continuous("Property Damage in US dollars")+ 
     xlab("Severe Weather Type") + ggtitle("Total Property Damage by\n Severe Weather Events in\n the U.S. from 1995 - 2011")
 
-cropPlot<- qplot(EVTYPE, data = crop.damage, weight = cropDamage, ) + 
+cropPlot<- qplot(EVTYPE, data = crop, weight = cropDamage, ) + 
     geom_bar(stat="identity",fill="blue" ) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1)) + scale_y_continuous("Crop Damage in US dollars") + 
     xlab("Severe Weather Type") + ggtitle("Total Crop Damage by \nSevere Weather Events in\n the U.S. from 1995 - 2011")
+
+
+plot(cropPlot)
+
+
 grid.arrange(propertyPlot, cropPlot, ncol = 2)
 ```  
 
